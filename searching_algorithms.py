@@ -31,7 +31,7 @@ def astar(start, goal):
         f_cost, g_cost, city, path = heapq.heappop(queue)
 
         if city == goal:
-            return g_cost, path
+            return g_cost, path, len(visited)
 
         if city not in visited:
             visited.add(city)
@@ -43,7 +43,7 @@ def astar(start, goal):
                     heapq.heappush(queue, (new_f, new_g, neighbor,
 path + [neighbor]))
 
-    return None, []
+    return None, [],len(visited)
 
 def dfs(start, goal):
     stack = [(start, [start], 0)]  # (current_node, path, accumulative_cost)
@@ -53,14 +53,14 @@ def dfs(start, goal):
         node, path, cost = stack.pop()
 
         if node == goal:
-            return cost, path
+            return cost, path, len(visited)+1
 
         if node not in visited:
             visited.add(node)
             for neighbor, distance in GRAPH.get(node, []):
                 if neighbor not in visited:
                     stack.append((neighbor, path + [neighbor], cost + distance))
-    return None, []
+    return None, [],len(visited)
 
 def bfs(start, goal):
     queue = deque([(start, [start], 0)])  # (current_node, path,accumulative_cost)
@@ -70,14 +70,14 @@ def bfs(start, goal):
         node, path, cost = queue.popleft()
 
         if node == goal:
-            return cost, path
+            return cost, path, len(visited)+1
 
         if node not in visited:
             visited.add(node)
             for neighbor, distance in GRAPH.get(node, []):
                 if neighbor not in visited:
                     queue.append((neighbor, path + [neighbor], cost + distance))
-    return None, []
+    return None, [],len(visited)
 
 def ucs(start, goal):
     queue = [(0, start, [start])]  # (accumulative_cost, current_node, path)
@@ -87,7 +87,7 @@ def ucs(start, goal):
         cost, node, path = heapq.heappop(queue)
 
         if node == goal:
-            return cost, path
+            return cost, path, len(visited)+1
 
         if node not in visited:
             visited.add(node)
@@ -95,7 +95,7 @@ def ucs(start, goal):
                 if neighbor not in visited:
                     heapq.heappush(queue, (cost + distance, neighbor,
 path + [neighbor]))
-    return None, []
+    return None, [],len(visited)+1
 
 def greedy_best_first(start, goal):
     queue = [(heuristic[start], start, [start], 0)]  # (heuristic,current_node, path, accumulative_cost)
@@ -105,40 +105,47 @@ def greedy_best_first(start, goal):
         _, node, path, cost = heapq.heappop(queue)
 
         if node == goal:
-            return cost, path
+            return cost, path, len(visited)+1
 
         if node not in visited:
             visited.add(node)
             for neighbor, distance in GRAPH.get(node, []):
                 if neighbor not in visited:
-                    heapq.heappush(queue, (heuristic[neighbor],
-neighbor, path + [neighbor], cost + distance))
-    return None, []
+                    heapq.heappush(queue, (heuristic[neighbor],neighbor, path + [neighbor], cost + distance))
+    return None, [],len(visited)+1
 
 # Execute and view execution output
-cost, path = astar('College', 'Home')
+cost, path,nodes_visited = astar('College', 'Home')
 print("Shortest Path using A* Search: ")
 print("Path: ", " -> ".join(path))
 print("Total Cost: ", cost)
+print("Nodes Explored: ",nodes_visited)
+print()
 
-cost, path = dfs('College', 'Home')
+cost, path, nodes_visited = dfs('College', 'Home')
 print("Shortest Path using DFS: ")
 print("Path: ", " -> ".join(path))
 print("Total Cost: ", cost)
+print("Nodes Explored: ",nodes_visited)
+print()
 
-cost, path = bfs('College', 'Home')
+cost, path,nodes_visited = bfs('College', 'Home')
 print("Shortest Path using BFS: ")
 print("Path: ", " -> ".join(path))
 print("Total Cost: ", cost)
+print("Nodes Explored: ",nodes_visited)
+print()
 
-cost, path = ucs('College', 'Home')
+cost, path,nodes_visited = ucs('College', 'Home')
 print("Shortest Path using UCS: ")
 print("Path: ", " -> ".join(path))
 print("Total Cost: ", cost)
+print("Nodes Explored: ",nodes_visited)
+print()
 
-cost, path = greedy_best_first('College', 'Home')
+cost, path,nodes_visited = greedy_best_first('College', 'Home')
 print("Shortest Path using Greedy Best First Search: ")
 print("Path: ", " -> ".join(path))
 print("Total Cost: ", cost)
-
-
+print("Nodes Explored: ",nodes_visited)
+print()
